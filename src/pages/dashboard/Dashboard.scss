@@ -1,0 +1,63 @@
+@import "../../var.scss";
+
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: $white-color;
+  padding: 40px 80px;
+  border-radius: 40px;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  gap: 20px;
+
+  button {
+    width: fit-content;
+
+    svg {
+      fill: $white-color;
+      width: 16px;
+    }
+  }
+
+  .top {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      button {
+        padding: 12px;
+      }
+    }
+  }
+
+  .content-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: start;
+
+    .pet-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 40px;
+      .pet-content {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        cursor: pointer;
+        .image {
+          background-color: $gray-color;
+          width: 120px;
+          height: 120px;
+        }
+      }
+    }
+  }
+}
