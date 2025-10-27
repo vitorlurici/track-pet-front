@@ -44,6 +44,18 @@ export default function Dashboard() {
           <div className="pet-content">
             <div className="image"></div>Nome
           </div>
+          <div className="pet-content">
+            <div className="image"></div>Nome
+          </div>
+          <div className="pet-content">
+            <div className="image"></div>Nome
+          </div>
+          <div className="pet-content">
+            <div className="image"></div>Nome
+          </div>
+          <div className="pet-content">
+            <div className="image"></div>Nome
+          </div>
         </div>
       </div>
     </main>

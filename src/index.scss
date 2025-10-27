@@ -64,3 +64,10 @@ input {
     border-color: $main-color;
   }
 }
+
+.field {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 4px;
+}

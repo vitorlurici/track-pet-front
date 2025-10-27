@@ -6,6 +6,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import SignUp from "./pages/auth/SignUp.tsx";
 import Dashboard from "./pages/dashboard/Dashboard.tsx";
 import RegisterPet from "./pages/register-pet/RegisterPet.tsx";
+import Profile from "./pages/profile/Profile.tsx";
 
 const router = createBrowserRouter([
   {
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
   {
     path: "/cadastrar-pet",
     element: <RegisterPet />,
+  },
+  {
+    path: "/perfil",
+    element: <Profile />,
   },
 ]);
 createRoot(document.getElementById("root")!).render(
