@@ -32,30 +32,46 @@ export default function Dashboard() {
         </Link>
         <p>Pets cadastrados</p>
         <div className="pet-container">
-          <div className="pet-content">
-            <div className="image"></div>Nome
-          </div>
-          <div className="pet-content">
-            <div className="image"></div>Nome
-          </div>
-          <div className="pet-content">
-            <div className="image"></div>Nome
-          </div>
-          <div className="pet-content">
-            <div className="image"></div>Nome
-          </div>
-          <div className="pet-content">
-            <div className="image"></div>Nome
-          </div>
-          <div className="pet-content">
-            <div className="image"></div>Nome
-          </div>
-          <div className="pet-content">
-            <div className="image"></div>Nome
-          </div>
-          <div className="pet-content">
-            <div className="image"></div>Nome
-          </div>
+          <Link to={"/pet"}>
+            <div className="pet-content">
+              <div className="image"></div>Nome
+            </div>
+          </Link>
+          <Link to={"/pet"}>
+            <div className="pet-content">
+              <div className="image"></div>Nome
+            </div>
+          </Link>
+          <Link to={"/pet"}>
+            <div className="pet-content">
+              <div className="image"></div>Nome
+            </div>
+          </Link>
+          <Link to={"/pet"}>
+            <div className="pet-content">
+              <div className="image"></div>Nome
+            </div>
+          </Link>
+          <Link to={"/pet"}>
+            <div className="pet-content">
+              <div className="image"></div>Nome
+            </div>
+          </Link>
+          <Link to={"/pet"}>
+            <div className="pet-content">
+              <div className="image"></div>Nome
+            </div>
+          </Link>
+          <Link to={"/pet"}>
+            <div className="pet-content">
+              <div className="image"></div>Nome
+            </div>
+          </Link>
+          <Link to={"/pet"}>
+            <div className="pet-content">
+              <div className="image"></div>Nome
+            </div>
+          </Link>
         </div>
       </div>
     </main>

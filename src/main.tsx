@@ -6,7 +6,8 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import SignUp from "./pages/auth/SignUp.tsx";
 import Dashboard from "./pages/dashboard/Dashboard.tsx";
 import RegisterPet from "./pages/register-pet/RegisterPet.tsx";
-import Profile from "./pages/profile/Profile.tsx";
+import ProfileUser from "./pages/profile-user/ProfileUser.tsx";
+import ProfilePet from "./pages/profile-pet/ProfilePet.tsx";
 
 const router = createBrowserRouter([
   {
@@ -27,7 +28,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/perfil",
-    element: <Profile />,
+    element: <ProfileUser />,
+  },
+  {
+    path: "/pet",
+    element: <ProfilePet />,
   },
 ]);
 createRoot(document.getElementById("root")!).render(
