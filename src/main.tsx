@@ -8,6 +8,7 @@ import Dashboard from "./pages/dashboard/Dashboard.tsx";
 import RegisterPet from "./pages/register-pet/RegisterPet.tsx";
 import ProfileUser from "./pages/profile-user/ProfileUser.tsx";
 import ProfilePet from "./pages/profile-pet/ProfilePet.tsx";
+import Rastreamento from "./pages/rastreamento/Rastreamento.tsx";
 
 const router = createBrowserRouter([
   {
@@ -31,8 +32,12 @@ const router = createBrowserRouter([
     element: <ProfileUser />,
   },
   {
-    path: "/pet",
+    path: "/pet/:id",
     element: <ProfilePet />,
+  },
+  {
+    path: "/rastreamento/:id",
+    element: <Rastreamento />,
   },
 ]);
 createRoot(document.getElementById("root")!).render(
