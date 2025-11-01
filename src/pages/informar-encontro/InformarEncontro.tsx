@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import "./InformarEncontro.scss";
 
-import { enviarLeituraQr } from "../services/leituraService";
+import { enviarLeituraQr, getAnimalPublico } from "../services/leituraService";
+import type { AnimalPublico } from "../services/leituraService";
 
 export default function InformarEncontro() {
   const { idAnimal } = useParams<{ idAnimal: string }>();
@@ -14,16 +15,40 @@ export default function InformarEncontro() {
   const [sucesso, setSucesso] = useState(false);
   const [localizacaoPermitida, setLocalizacaoPermitida] = useState(false);
   const [solicitandoLocalizacao, setSolicitandoLocalizacao] = useState(false);
+  const [animal, setAnimal] = useState<AnimalPublico | null>(null);
+  const [carregandoAnimal, setCarregandoAnimal] = useState(true);
 
   useEffect(() => {
     if (!idAnimal) {
       setErro("ID do animal não encontrado.");
+      setCarregandoAnimal(false);
       return;
     }
 
+    // Busca dados do animal
+    buscarDadosAnimal();
     // Solicita permissão de localização ao carregar a página
     solicitarLocalizacao();
   }, [idAnimal]);
+
+  async function buscarDadosAnimal() {
+    if (!idAnimal) return;
+
+    setCarregandoAnimal(true);
+    try {
+      const dadosAnimal = await getAnimalPublico(idAnimal);
+      setAnimal(dadosAnimal);
+    } catch (error: any) {
+      console.error("Erro ao buscar dados do animal:", error);
+      if (error.response?.status === 404) {
+        setErro("Animal não encontrado.");
+      } else {
+        setErro("Erro ao carregar dados do animal.");
+      }
+    } finally {
+      setCarregandoAnimal(false);
+    }
+  }
 
   async function solicitarLocalizacao() {
     if (!navigator.geolocation) {
@@ -118,6 +143,45 @@ export default function InformarEncontro() {
           <h1>Encontrei um Pet!</h1>
           <p>Informe a localização e uma mensagem para o dono</p>
         </div>
+
+        {carregandoAnimal ? (
+          <div className="carregando-animal">
+            <p>Carregando dados do pet...</p>
+          </div>
+        ) : animal ? (
+          <div className="pet-info">
+            {animal.fotoUrl && (
+              <div className="pet-foto">
+                <img src={animal.fotoUrl} alt={animal.nome} />
+              </div>
+            )}
+            <div className="pet-dados">
+              <h2>Olá, sou o {animal.nome} e estou perdido</h2>
+              <div className="pet-detalhes">
+                <div className="detalhe-item">
+                  <span className="label">Cor:</span>
+                  <span className="valor">{animal.cor.charAt(0).toUpperCase() + animal.cor.slice(1).toLowerCase()}</span>
+                </div>
+                <div className="detalhe-item">
+                  <span className="label">Sexo:</span>
+                  <span className="valor">
+                    {animal.sexo === "M" || animal.sexo === "MACHO" 
+                      ? "Macho" 
+                      : animal.sexo === "F" || animal.sexo === "FEMEA"
+                      ? "Fêmea"
+                      : animal.sexo}
+                  </span>
+                </div>
+                {animal.peso && (
+                  <div className="detalhe-item">
+                    <span className="label">Peso:</span>
+                    <span className="valor">{animal.peso} kg</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        ) : null}
 
         {sucesso ? (
           <div className="sucesso-message">

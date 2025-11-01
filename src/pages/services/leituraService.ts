@@ -16,3 +16,23 @@ export async function enviarLeituraQr(idAnimal: string, dados: LeituraQrRequest)
   return response.data;
 }
 
+export interface AnimalPublico {
+  id: string;
+  nome: string;
+  peso: number;
+  fotoUrl: string;
+  sexo: string;
+  cor: string;
+}
+
+export async function getAnimalPublico(idAnimal: string): Promise<AnimalPublico> {
+  const response = await apiPublica.get<AnimalPublico>(`/animal/informacoes-publicas/${idAnimal}`);
+  const animal = response.data;
+  // Construir URL completa da foto se for um caminho relativo
+  if (animal.fotoUrl && !animal.fotoUrl.startsWith('http')) {
+    animal.fotoUrl = `${apiPublica.defaults.baseURL}${animal.fotoUrl}`;
+  }
+  return animal;
+}
+
+

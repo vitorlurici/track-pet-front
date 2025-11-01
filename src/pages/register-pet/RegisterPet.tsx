@@ -1,6 +1,6 @@
 import "./RegisterPet.scss";
 import { cadastrarAnimal } from "../services/animalService";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import type { ChangeEvent , DragEvent} from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -16,11 +16,42 @@ export default function RegisterPet() {
   const [preview, setPreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Tamanho máximo permitido: 5MB (5 * 1024 * 1024 bytes)
+  const TAMANHO_MAXIMO_FOTO = 5 * 1024 * 1024; // 5MB
+
+  // Valida o tamanho do arquivo
+  function validarArquivo(file: File): string | null {
+    // Verifica se é uma imagem
+    if (!file.type.startsWith("image/")) {
+      return "Por favor, selecione um arquivo de imagem.";
+    }
+
+    // Verifica o tamanho do arquivo
+    if (file.size > TAMANHO_MAXIMO_FOTO) {
+      const tamanhoMB = (file.size / (1024 * 1024)).toFixed(2);
+      return `O arquivo é muito grande (${tamanhoMB} MB). O tamanho máximo permitido é 5 MB. Por favor, escolha uma imagem menor ou comprima o arquivo.`;
+    }
+
+    return null;
+  }
 
   // Ao selecionar a foto normalmente
   function handleFotoChange(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (file) {
+      const erroValidacao = validarArquivo(file);
+      if (erroValidacao) {
+        setErro(erroValidacao);
+        setFoto(null);
+        setPreview(null);
+        // Limpa o input
+        e.target.value = "";
+        return;
+      }
+
+      setErro(null);
       setFoto(file);
       setPreview(URL.createObjectURL(file));
     }
@@ -29,8 +60,18 @@ export default function RegisterPet() {
   // Ao arrastar e soltar
   function handleDrop(e: DragEvent<HTMLDivElement>) {
     e.preventDefault();
+    e.stopPropagation(); // Evita que dispare o onClick
     const file = e.dataTransfer.files?.[0];
-    if (file && file.type.startsWith("image/")) {
+    if (file) {
+      const erroValidacao = validarArquivo(file);
+      if (erroValidacao) {
+        setErro(erroValidacao);
+        setFoto(null);
+        setPreview(null);
+        return;
+      }
+
+      setErro(null);
       setFoto(file);
       setPreview(URL.createObjectURL(file));
     }
@@ -39,6 +80,11 @@ export default function RegisterPet() {
   // Evita o comportamento padrão do navegador
   function handleDragOver(e: DragEvent<HTMLDivElement>) {
     e.preventDefault();
+  }
+
+  // Abre o explorador de arquivos ao clicar na área da foto
+  function handleFotoClick() {
+    fileInputRef.current?.click();
   }
 
   async function handleSubmit() {
@@ -59,14 +105,32 @@ export default function RegisterPet() {
         cor,
       };
 
+      // Valida novamente o tamanho da foto antes de enviar (caso tenha mudado)
+      if (foto) {
+        const erroValidacao = validarArquivo(foto);
+        if (erroValidacao) {
+          setErro(erroValidacao);
+          setLoading(false);
+          return;
+        }
+      }
+
       // Foto agora é opcional
       await cadastrarAnimal(dados, foto ?? undefined);
 
       alert("Pet cadastrado com sucesso!");
       navigate("/painel");
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      setErro("Erro ao cadastrar o pet.");
+      
+      // Trata especificamente o erro de tamanho máximo excedido
+      if (err?.response?.status === 413 || err?.response?.data?.message?.includes("Maximum upload size")) {
+        setErro("O arquivo de foto é muito grande. O tamanho máximo permitido é 5 MB. Por favor, escolha uma imagem menor ou comprima o arquivo.");
+      } else if (err?.response?.status === 400) {
+        setErro(err?.response?.data?.message || "Dados inválidos. Verifique os campos preenchidos.");
+      } else {
+        setErro("Erro ao cadastrar o pet. Tente novamente.");
+      }
     } finally {
       setLoading(false);
     }
@@ -86,28 +150,33 @@ export default function RegisterPet() {
       </div>
 
       <div className="content-container">
-        <div
-          className="left-container"
-          onDrop={handleDrop}
-          onDragOver={handleDragOver}
-        >
+        <div className="left-container">
           <div
-            className="picture"
-            style={{
-              backgroundImage: preview ? `url(${preview})` : "none",
-              backgroundColor: preview ? "transparent" : "#ccc",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
+            className="foto-upload-area"
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+            onClick={handleFotoClick}
           >
-            {!preview && (
-              <p style={{ textAlign: "center", padding: "1rem", color: "#666" }}>
-                Arraste uma foto aqui
-              </p>
-            )}
+            <div
+              className="picture"
+              style={{
+                backgroundImage: preview ? `url(${preview})` : "none",
+                backgroundColor: preview ? "transparent" : "#f0f0f0",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+            >
+              {!preview && (
+                <div className="foto-placeholder">
+                  <p className="foto-text-main">Arraste a foto aqui</p>
+                  <p className="foto-text-sub">ou clique para selecionar</p>
+                </div>
+              )}
+            </div>
           </div>
 
           <input
+            ref={fileInputRef}
             type="file"
             id="foto"
             accept="image/*"
@@ -115,10 +184,9 @@ export default function RegisterPet() {
             style={{ display: "none" }}
           />
 
-          {/* O label precisa envolver o botão corretamente */}
-          <label htmlFor="foto">
-            <button type="button">Carregar foto</button>
-          </label>
+          <p className="foto-info">
+            Tamanho máximo: 5 MB
+          </p>
         </div>
 
         <div className="right-container">
@@ -172,7 +240,18 @@ export default function RegisterPet() {
             {loading ? "Cadastrando..." : "Cadastrar Pet"}
           </button>
 
-          {erro && <p style={{ color: "red" }}>{erro}</p>}
+          {erro && (
+            <div style={{ 
+              color: "red", 
+              backgroundColor: "#fee", 
+              padding: "12px", 
+              borderRadius: "8px", 
+              border: "1px solid #fcc",
+              marginTop: "8px"
+            }}>
+              {erro}
+            </div>
+          )}
         </div>
       </div>
     </main>
