@@ -9,6 +9,7 @@ import RegisterPet from "./pages/register-pet/RegisterPet.tsx";
 import ProfileUser from "./pages/profile-user/ProfileUser.tsx";
 import ProfilePet from "./pages/profile-pet/ProfilePet.tsx";
 import Rastreamento from "./pages/rastreamento/Rastreamento.tsx";
+import InformarEncontro from "./pages/informar-encontro/InformarEncontro.tsx";
 
 const router = createBrowserRouter([
   {
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
   {
     path: "/rastreamento/:id",
     element: <Rastreamento />,
+  },
+  {
+    path: "/informar-encontro/:idAnimal",
+    element: <InformarEncontro />,
   },
 ]);
 createRoot(document.getElementById("root")!).render(

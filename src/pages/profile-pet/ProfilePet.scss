@@ -81,6 +81,10 @@
       .btn-atualizar {
         background-color: $main-color;
       }
+
+      .btn-qrcode {
+        background-color: $secondary-color;
+      }
     }
   }
 
@@ -375,6 +379,76 @@
 
   &:hover {
     background: #b0b0b0;
+  }
+}
+
+// Modal de QR Code
+.modal-qrcode {
+  max-width: 500px;
+
+  .qrcode-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    padding: 32px;
+    text-align: center;
+
+    .qrcode-description {
+      margin: 0;
+      color: #666;
+      font-size: 1rem;
+    }
+
+    .qrcode-container {
+      padding: 20px;
+      background-color: $white-color;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .qrcode-url {
+      width: 100%;
+      padding: 16px;
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      border: 1px solid #e0e0e0;
+
+      .url-label {
+        margin: 0 0 8px 0;
+        font-weight: 600;
+        color: #333;
+        font-size: 0.9rem;
+      }
+
+      .url-value {
+        margin: 0;
+        color: $main-color;
+        font-size: 0.85rem;
+        word-break: break-all;
+      }
+    }
+
+    .btn-download-qr {
+      width: 100%;
+      padding: 12px 24px;
+      background-color: $secondary-color;
+      color: $white-color;
+      border: none;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      &:hover {
+        background-color: #9db871;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      }
+    }
   }
 }
 

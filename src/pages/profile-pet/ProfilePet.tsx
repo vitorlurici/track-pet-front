@@ -5,8 +5,10 @@ import { getAnimalById, updateAnimal, getLeiturasByAnimalId } from "../services/
 import type { Animal } from "../types/animal";
 import type { Leitura } from "../types/leitura";
 import type { ChangeEvent } from "react";
+import { QRCodeSVG } from "qrcode.react";
 
 const API_URL = "http://localhost:8080"; // alterar para variável global
+const FRONTEND_URL = window.location.origin; // URL do frontend
 
 export default function ProfilePet() {
   const { id } = useParams<{ id: string }>();
@@ -14,6 +16,7 @@ export default function ProfilePet() {
   const [animal, setAnimal] = useState<Animal | null>(null);
   const [leituras, setLeituras] = useState<Leitura[]>([]);
   const [modalAberto, setModalAberto] = useState(false);
+  const [modalQrAberto, setModalQrAberto] = useState(false);
   const [detalhesVisiveis, setDetalhesVisiveis] = useState(false);
   const [loading, setLoading] = useState(false);
   const [salvando, setSalvando] = useState(false);
@@ -312,6 +315,9 @@ export default function ProfilePet() {
             <button onClick={abrirModal} className="btn-atualizar">
               Atualizar
             </button>
+            <button onClick={() => setModalQrAberto(true)} className="btn-qrcode">
+              QR Code
+            </button>
           </div>
         </div>
 
@@ -518,6 +524,72 @@ export default function ProfilePet() {
                 disabled={salvando}
               >
                 {salvando ? "Salvando..." : "Salvar"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de QR Code */}
+      {modalQrAberto && animal && (
+        <div className="modal-overlay" onClick={() => setModalQrAberto(false)}>
+          <div className="modal-content modal-qrcode" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>QR Code - {animal.nome}</h2>
+              <button className="btn-fechar" onClick={() => setModalQrAberto(false)}>
+                ×
+              </button>
+            </div>
+
+            <div className="modal-body qrcode-body">
+              <p className="qrcode-description">
+                Escaneie este QR code para informar sobre o encontro do pet
+              </p>
+              
+              <div className="qrcode-container">
+                <QRCodeSVG
+                  value={`${FRONTEND_URL}/informar-encontro/${animal.id}`}
+                  size={256}
+                  level="H"
+                  includeMargin={true}
+                />
+              </div>
+
+              <div className="qrcode-url">
+                <p className="url-label">URL:</p>
+                <p className="url-value">{FRONTEND_URL}/informar-encontro/{animal.id}</p>
+              </div>
+
+              <button
+                className="btn-download-qr"
+                onClick={() => {
+                  const qrContainer = document.querySelector('.qrcode-container');
+                  const svg = qrContainer?.querySelector('svg');
+                  if (!svg) return;
+
+                  const svgData = new XMLSerializer().serializeToString(svg);
+                  const canvas = document.createElement('canvas');
+                  const ctx = canvas.getContext('2d');
+                  const img = new Image();
+
+                  img.onload = () => {
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    if (ctx) {
+                      ctx.drawImage(img, 0, 0);
+                    }
+                    const pngFile = canvas.toDataURL('image/png');
+                    
+                    const downloadLink = document.createElement('a');
+                    downloadLink.download = `QRCode-${animal.nome.replace(/\s+/g, '_')}-${animal.id}.png`;
+                    downloadLink.href = pngFile;
+                    downloadLink.click();
+                  };
+
+                  img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
+                }}
+              >
+                Baixar QR Code
               </button>
             </div>
           </div>
