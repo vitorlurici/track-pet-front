@@ -52,6 +52,27 @@ export default function Dashboard() {
     navigate("/");
   }
 
+  function getSituacaoFormatada(situacao: string): string {
+    const situacaoUpper = situacao.toUpperCase().trim();
+    if (situacaoUpper === "PERDIDO" || situacaoUpper === "P") {
+      return "Perdido";
+    }
+    if (situacaoUpper === "VIVO" || situacaoUpper === "V") {
+      return "Vivo";
+    }
+    return situacao.charAt(0).toUpperCase() + situacao.slice(1).toLowerCase();
+  }
+
+  function isPerdido(situacao: string): boolean {
+    const situacaoUpper = situacao.toUpperCase().trim();
+    return situacaoUpper === "PERDIDO" || situacaoUpper === "P";
+  }
+
+  function isVivo(situacao: string): boolean {
+    const situacaoUpper = situacao.toUpperCase().trim();
+    return situacaoUpper === "VIVO" || situacaoUpper === "V";
+  }
+
   return (
     <main className="dashboard">
       <div className="top">
@@ -85,16 +106,24 @@ export default function Dashboard() {
             animais.map((pet) => (
               <Link to={`/pet/${pet.id}`} key={pet.id}>
                 <div className="pet-content">
-                  <div
-                    className="image"
-                    style={{
-                      backgroundImage: `url(${API_URL}${pet.fotoUrl})`,
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                    }}
-                  ></div>
-                  {pet.nome}
-                  
+                  <div className="image">
+                    {pet.fotoUrl ? (
+                      <img
+                        src={`${API_URL}${pet.fotoUrl}`}
+                        alt={pet.nome}
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = "none";
+                        }}
+                      />
+                    ) : null}
+                  </div>
+                  <span className="pet-nome">{pet.nome.charAt(0).toUpperCase() + pet.nome.slice(1).toLowerCase()}</span>
+                  <span 
+                    className={`pet-situacao ${isPerdido(pet.situacao) ? 'perdido' : isVivo(pet.situacao) ? 'vivo' : 'normal'}`}
+                  >
+                    {getSituacaoFormatada(pet.situacao)}
+                  </span>
                 </div>
               </Link>
             ))

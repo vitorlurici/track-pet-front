@@ -2,12 +2,15 @@
 
 .main-container {
   display: flex;
+  flex-direction: row;
   align-items: center;
   background-color: $white-color;
-  padding: 80px;
+  padding: 40px 80px;
   border-radius: 40px;
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
   gap: 40px;
+  max-width: 1200px;
+  width: 100%;
 
   .left-content {
     display: flex;
@@ -15,13 +18,106 @@
     gap: 20px;
     width: 50%;
     text-align: start;
+
+    h2 {
+      font-size: 2rem;
+      font-weight: 600;
+      color: $main-color;
+      margin: 0;
+    }
   }
 
   .right-content {
     width: 50%;
     display: flex;
+    justify-content: center;
+    align-items: center;
+
     svg {
-      width: 600px;
+      width: 100%;
+      max-width: 600px;
+      height: auto;
+    }
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    label {
+      font-weight: 500;
+      color: #333;
+      font-size: 0.95rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 16px;
+      font-family: "Roboto", sans-serif;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      box-sizing: border-box;
+
+      &:focus {
+        outline: none;
+        border-color: $main-color;
+        box-shadow: 0 0 0 3px rgba(130, 131, 191, 0.1);
+      }
+    }
+  }
+
+  button {
+    padding: 12px 32px;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: transform 0.2s, box-shadow 0.2s;
+    width: 100%;
+    background-color: $main-color;
+    color: $white-color;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      background-color: #6d6ea8;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+  }
+
+  .error {
+    background-color: #fee;
+    color: #e74c3c;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 1px solid #e74c3c;
+    font-size: 0.95rem;
+    margin: 0;
+  }
+
+  > span {
+    text-align: center;
+    color: #666;
+    font-size: 0.95rem;
+
+    a {
+      color: $main-color;
+      font-weight: 600;
+      text-decoration: none;
+      transition: color 0.2s;
+
+      &:hover {
+        color: #6d6ea8;
+      }
     }
   }
 }

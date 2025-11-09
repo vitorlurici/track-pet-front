@@ -22,6 +22,8 @@ export default function ProfilePet() {
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState("");
   const [erroValidacao, setErroValidacao] = useState("");
+  const [qrTamanho, setQrTamanho] = useState({ largura: 2, altura: 4 }); // em cm
+  const [qrSize, setQrSize] = useState(256); // tamanho do QR code em pixels
 
   const [form, setForm] = useState({
     nome: "",
@@ -546,10 +548,35 @@ export default function ProfilePet() {
                 Escaneie este QR code para informar sobre o encontro do pet
               </p>
               
-              <div className="qrcode-container">
+              <div className="qrcode-size-selector">
+                <label htmlFor="tamanho-qr">Tamanho para impressão:</label>
+                <select
+                  id="tamanho-qr"
+                  value={`${qrTamanho.largura}x${qrTamanho.altura}`}
+                  onChange={(e) => {
+                    const [largura, altura] = e.target.value.split('x').map(Number);
+                    setQrTamanho({ largura, altura });
+                    // Converte cm para pixels (1cm ≈ 37.8 pixels na impressão)
+                    const pixelsPorCm = 37.8;
+                    setQrSize(Math.min(largura, altura) * pixelsPorCm);
+                  }}
+                  className="select-tamanho"
+                >
+                  <option value="2x2">2 x 2 cm</option>
+                  <option value="2x4">2 x 4 cm</option>
+                  <option value="3x3">3 x 3 cm</option>
+                  <option value="4x4">4 x 4 cm</option>
+                  <option value="5x5">5 x 5 cm</option>
+                  <option value="6x6">6 x 6 cm</option>
+                  <option value="4x6">4 x 6 cm</option>
+                  <option value="6x8">6 x 8 cm</option>
+                </select>
+              </div>
+
+              <div className="qrcode-container" id="qrcode-print">
                 <QRCodeSVG
                   value={`${FRONTEND_URL}/informar-encontro/${animal.id}`}
-                  size={256}
+                  size={qrSize}
                   level="H"
                   includeMargin={true}
                 />
@@ -560,37 +587,148 @@ export default function ProfilePet() {
                 <p className="url-value">{FRONTEND_URL}/informar-encontro/{animal.id}</p>
               </div>
 
-              <button
-                className="btn-download-qr"
-                onClick={() => {
-                  const qrContainer = document.querySelector('.qrcode-container');
-                  const svg = qrContainer?.querySelector('svg');
-                  if (!svg) return;
+              <div className="qrcode-actions">
+                <button
+                  className="btn-download-qr"
+                  onClick={() => {
+                    const qrContainer = document.querySelector('.qrcode-container');
+                    const svg = qrContainer?.querySelector('svg');
+                    if (!svg) return;
 
-                  const svgData = new XMLSerializer().serializeToString(svg);
-                  const canvas = document.createElement('canvas');
-                  const ctx = canvas.getContext('2d');
-                  const img = new Image();
+                    const svgData = new XMLSerializer().serializeToString(svg);
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    const img = new Image();
 
-                  img.onload = () => {
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    if (ctx) {
-                      ctx.drawImage(img, 0, 0);
-                    }
-                    const pngFile = canvas.toDataURL('image/png');
-                    
-                    const downloadLink = document.createElement('a');
-                    downloadLink.download = `QRCode-${animal.nome.replace(/\s+/g, '_')}-${animal.id}.png`;
-                    downloadLink.href = pngFile;
-                    downloadLink.click();
-                  };
+                    img.onload = () => {
+                      canvas.width = img.width;
+                      canvas.height = img.height;
+                      if (ctx) {
+                        ctx.drawImage(img, 0, 0);
+                      }
+                      const pngFile = canvas.toDataURL('image/png');
+                      
+                      const downloadLink = document.createElement('a');
+                      downloadLink.download = `QRCode-${animal.nome.replace(/\s+/g, '_')}-${animal.id}.png`;
+                      downloadLink.href = pngFile;
+                      downloadLink.click();
+                    };
 
-                  img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
-                }}
-              >
-                Baixar QR Code
-              </button>
+                    img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
+                  }}
+                >
+                  Baixar QR Code
+                </button>
+
+                <button
+                  className="btn-print-qr"
+                  onClick={() => {
+                    const printWindow = window.open('', '_blank');
+                    if (!printWindow) return;
+
+                    const qrContainer = document.getElementById('qrcode-print');
+                    const svg = qrContainer?.querySelector('svg');
+                    if (!svg) return;
+
+                    // Calcula dimensões em pixels para impressão (1cm = 37.8px)
+                    const pixelsPorCm = 37.8;
+                    const larguraPx = qrTamanho.largura * pixelsPorCm;
+                    const alturaPx = qrTamanho.altura * pixelsPorCm;
+
+                    const svgData = new XMLSerializer().serializeToString(svg);
+                    const svgBase64 = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
+
+                    printWindow.document.write(`
+                      <!DOCTYPE html>
+                      <html>
+                        <head>
+                          <title>QR Code - ${animal.nome}</title>
+                          <style>
+                            @media print {
+                              @page {
+                                size: ${qrTamanho.largura}cm ${qrTamanho.altura}cm;
+                                margin: 0;
+                              }
+                              body {
+                                margin: 0;
+                                padding: 0;
+                                display: flex;
+                                flex-direction: column;
+                                align-items: center;
+                                justify-content: center;
+                                width: ${qrTamanho.largura}cm;
+                                height: ${qrTamanho.altura}cm;
+                              }
+                            }
+                            body {
+                              margin: 0;
+                              padding: 0.2cm;
+                              display: flex;
+                              flex-direction: column;
+                              align-items: center;
+                              justify-content: center;
+                              width: ${qrTamanho.largura}cm;
+                              height: ${qrTamanho.altura}cm;
+                              font-family: Arial, sans-serif;
+                              box-sizing: border-box;
+                            }
+                            .qrcode-wrapper {
+                              display: flex;
+                              flex-direction: column;
+                              align-items: center;
+                              justify-content: center;
+                              width: 100%;
+                              height: 100%;
+                              gap: 0.3cm;
+                            }
+                            img {
+                              max-width: 80%;
+                              max-height: 60%;
+                              object-fit: contain;
+                            }
+                            .pet-info {
+                              text-align: center;
+                              font-size: 0.35cm;
+                              line-height: 1.3;
+                              font-weight: bold;
+                              color: #000;
+                              margin-top: 0.2cm;
+                            }
+                            .pet-nome {
+                              display: block;
+                              margin-bottom: 0.1cm;
+                            }
+                            .pet-raca {
+                              display: block;
+                              font-weight: normal;
+                            }
+                          </style>
+                        </head>
+                        <body>
+                          <div class="qrcode-wrapper">
+                            <img src="${svgBase64}" alt="QR Code - ${animal.nome}" />
+                            <div class="pet-info">
+                              <span class="pet-nome">${animal.nome}</span>
+                              ${animal.raca ? `<span class="pet-raca">- ${animal.raca}</span>` : ''}
+                            </div>
+                          </div>
+                          <script>
+                            window.onload = function() {
+                              window.print();
+                              window.onafterprint = function() {
+                                window.close();
+                              };
+                            };
+                          </script>
+                        </body>
+                      </html>
+                    `);
+                    printWindow.document.close();
+                  }}
+                >
+                  Imprimir QR Code
+                </button>
+              </div>
             </div>
           </div>
         </div>

@@ -384,7 +384,7 @@
 
 // Modal de QR Code
 .modal-qrcode {
-  max-width: 500px;
+  max-width: 600px;
 
   .qrcode-body {
     display: flex;
@@ -400,6 +400,38 @@
       font-size: 1rem;
     }
 
+    .qrcode-size-selector {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: flex-start;
+
+      label {
+        font-weight: 600;
+        color: #333;
+        font-size: 0.95rem;
+      }
+
+      .select-tamanho {
+        width: 100%;
+        padding: 10px 14px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 16px;
+        font-family: "Roboto", sans-serif;
+        background-color: $white-color;
+        cursor: pointer;
+        transition: border-color 0.2s, box-shadow 0.2s;
+
+        &:focus {
+          outline: none;
+          border-color: $main-color;
+          box-shadow: 0 0 0 3px rgba(130, 131, 191, 0.1);
+        }
+      }
+    }
+
     .qrcode-container {
       padding: 20px;
       background-color: $white-color;
@@ -408,6 +440,13 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      max-width: 100%;
+      overflow: auto;
+
+      svg {
+        max-width: 100%;
+        height: auto;
+      }
     }
 
     .qrcode-url {
@@ -432,21 +471,48 @@
       }
     }
 
-    .btn-download-qr {
+    .qrcode-actions {
       width: 100%;
-      padding: 12px 24px;
-      background-color: $secondary-color;
-      color: $white-color;
-      border: none;
-      border-radius: 8px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s;
+      display: flex;
+      gap: 12px;
+      flex-direction: column;
 
-      &:hover {
-        background-color: #9db871;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      .btn-download-qr,
+      .btn-print-qr {
+        width: 100%;
+        padding: 12px 24px;
+        color: $white-color;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        &:active {
+          transform: translateY(0);
+        }
+      }
+
+      .btn-download-qr {
+        background-color: $secondary-color;
+
+        &:hover {
+          background-color: #9db871;
+        }
+      }
+
+      .btn-print-qr {
+        background-color: $main-color;
+
+        &:hover {
+          background-color: #6d6ea8;
+        }
       }
     }
   }

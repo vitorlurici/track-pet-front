@@ -53,3 +53,26 @@ export async function getRastreamentoById(idLeitura: string): Promise<Leitura> {
   const response = await api.get<Leitura>(`/leitura/${idLeitura}`);
   return response.data;
 }
+
+export async function marcarAnimalComoPerdido(idAnimal: string, dadosAnimal: Animal): Promise<Animal> {
+  // Prepara o body com os dados do animal, alterando apenas a situação para PERDIDO
+  const body = {
+    id: dadosAnimal.id,
+    nome: dadosAnimal.nome,
+    dataNascimento: dadosAnimal.dataNascimento,
+    peso: dadosAnimal.peso,
+    situacao: "PERDIDO",
+    fotoUrl: dadosAnimal.fotoUrl,
+    raca: dadosAnimal.raca,
+    sexo: dadosAnimal.sexo,
+    cor: dadosAnimal.cor,
+    ativo: dadosAnimal.ativo
+  };
+
+  const response = await api.patch<Animal>(`/animal/perdido/${idAnimal}`, body, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  return response.data;
+}
