@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import "./ProfilePet.scss";
-import { getAnimalById, updateAnimal, getLeiturasByAnimalId } from "../services/animalService";
+import {
+  getAnimalById,
+  updateAnimal,
+  getLeiturasByAnimalId,
+} from "../services/animalService";
 import type { Animal } from "../types/animal";
 import type { Leitura } from "../types/leitura";
 import type { ChangeEvent } from "react";
@@ -90,7 +94,12 @@ export default function ProfilePet() {
     if (sexoUpper === "M" || sexoUpper === "MACHO" || sexoUpper === "MALE") {
       return "Macho";
     }
-    if (sexoUpper === "F" || sexoUpper === "FEMEA" || sexoUpper === "FEMEA" || sexoUpper === "FEMALE") {
+    if (
+      sexoUpper === "F" ||
+      sexoUpper === "FEMEA" ||
+      sexoUpper === "FEMEA" ||
+      sexoUpper === "FEMALE"
+    ) {
       return "Fêmea";
     }
     return sexo;
@@ -102,7 +111,7 @@ export default function ProfilePet() {
     const nascimento = new Date(dataNascimento);
     const anos = hoje.getFullYear() - nascimento.getFullYear();
     const meses = hoje.getMonth() - nascimento.getMonth();
-    
+
     if (anos === 0) {
       return `${meses} ${meses === 1 ? "mês" : "meses"}`;
     }
@@ -134,9 +143,11 @@ export default function ProfilePet() {
     if (!sexo) return "";
     const sexoUpper = sexo.toUpperCase().trim();
     // Aceita M, MACHO ou qualquer variação que comece com M
-    if (sexoUpper === "M" || sexoUpper === "MACHO" || sexoUpper.startsWith("M")) return "M";
+    if (sexoUpper === "M" || sexoUpper === "MACHO" || sexoUpper.startsWith("M"))
+      return "M";
     // Aceita F, FEMEA ou qualquer variação que comece com F
-    if (sexoUpper === "F" || sexoUpper === "FEMEA" || sexoUpper.startsWith("F")) return "F";
+    if (sexoUpper === "F" || sexoUpper === "FEMEA" || sexoUpper.startsWith("F"))
+      return "F";
     return "";
   }
 
@@ -145,8 +156,10 @@ export default function ProfilePet() {
     if (!sexo) return "";
     const sexoUpper = sexo.toUpperCase().trim();
     // Garante que retorna exatamente "M" ou "F"
-    if (sexoUpper === "M" || sexoUpper === "MACHO" || sexoUpper.startsWith("M")) return "M";
-    if (sexoUpper === "F" || sexoUpper === "FEMEA" || sexoUpper.startsWith("F")) return "F";
+    if (sexoUpper === "M" || sexoUpper === "MACHO" || sexoUpper.startsWith("M"))
+      return "M";
+    if (sexoUpper === "F" || sexoUpper === "FEMEA" || sexoUpper.startsWith("F"))
+      return "F";
     // Se não reconhecer, retorna vazio (será validado antes de enviar)
     return "";
   }
@@ -195,7 +208,7 @@ export default function ProfilePet() {
     try {
       // Converte a situação para o formato que a API espera: "VIVO" -> "V"
       let situacaoParaEnviar = "V"; // Valor padrão
-      if (animal.situacao && typeof animal.situacao === 'string') {
+      if (animal.situacao && typeof animal.situacao === "string") {
         const situacaoUpper = animal.situacao.toUpperCase().trim();
         // Converte "VIVO" para "V", mantém "V" se já for
         if (situacaoUpper === "VIVO" || situacaoUpper === "V") {
@@ -204,12 +217,13 @@ export default function ProfilePet() {
           situacaoParaEnviar = situacaoUpper; // Mantém outros valores se houver
         }
       }
-      
+
       // Trata dataNascimento: se vazio ou null, envia null
-      const dataNascimentoValue = form.dataNascimento && form.dataNascimento.trim() !== "" 
-        ? form.dataNascimento 
-        : null;
-      
+      const dataNascimentoValue =
+        form.dataNascimento && form.dataNascimento.trim() !== ""
+          ? form.dataNascimento
+          : null;
+
       const dadosAtualizados = {
         nome: form.nome.trim(),
         dataNascimento: dataNascimentoValue,
@@ -224,7 +238,7 @@ export default function ProfilePet() {
       setAnimal(animalAtualizado);
       setModalAberto(false);
       alert("Dados atualizados com sucesso!");
-      
+
       // Atualiza os detalhes se estiverem visíveis
       if (detalhesVisiveis) {
         setForm({
@@ -238,7 +252,10 @@ export default function ProfilePet() {
       }
     } catch (error: any) {
       if (error.response?.status === 400) {
-        const mensagemErro = error.response?.data?.message || error.response?.data?.error || "Dados inválidos. Verifique os campos preenchidos.";
+        const mensagemErro =
+          error.response?.data?.message ||
+          error.response?.data?.error ||
+          "Dados inválidos. Verifique os campos preenchidos.";
         setErro(`Erro: ${mensagemErro}`);
       } else {
         setErro("Erro ao atualizar dados do pet. Tente novamente.");
@@ -311,13 +328,19 @@ export default function ProfilePet() {
           </div>
           <h1 className="pet-name">Pet {animal.nome}</h1>
           <div className="pet-actions">
-            <button onClick={() => setDetalhesVisiveis(!detalhesVisiveis)} className="btn-detalhes">
+            <button
+              onClick={() => setDetalhesVisiveis(!detalhesVisiveis)}
+              className="btn-detalhes"
+            >
               {detalhesVisiveis ? "Ocultar detalhes" : "Ver detalhes"}
             </button>
             <button onClick={abrirModal} className="btn-atualizar">
               Atualizar
             </button>
-            <button onClick={() => setModalQrAberto(true)} className="btn-qrcode">
+            <button
+              onClick={() => setModalQrAberto(true)}
+              className="btn-qrcode"
+            >
               QR Code
             </button>
           </div>
@@ -390,7 +413,11 @@ export default function ProfilePet() {
             {animal.situacao && (
               <div className="field">
                 <label>Situação</label>
-                <input disabled value={animal.situacao} placeholder="Situação" />
+                <input
+                  disabled
+                  value={animal.situacao}
+                  placeholder="Situação"
+                />
               </div>
             )}
           </div>
@@ -402,17 +429,19 @@ export default function ProfilePet() {
           {leituras.length > 0 ? (
             <div className="leituras-grid">
               {leituras.map((leitura) => (
-                <div 
-                  key={leitura.id} 
+                <div
+                  key={leitura.id}
                   className="leitura-card"
                   onClick={() => navigate(`/rastreamento/${leitura.id}`)}
                   style={{ cursor: "pointer" }}
                 >
                   <p className="leitura-data">
-                    <strong>Data/Hora:</strong> {formatarDataHora(leitura.dataHora)}
+                    <strong>Data/Hora:</strong>{" "}
+                    {formatarDataHora(leitura.dataHora)}
                   </p>
                   <p className="leitura-localizacao">
-                    <strong>Localização:</strong> {leitura.latitude}, {leitura.longitude}
+                    <strong>Localização:</strong> {leitura.latitude},{" "}
+                    {leitura.longitude}
                   </p>
                   {leitura.endereco && (
                     <p className="leitura-endereco">
@@ -483,7 +512,9 @@ export default function ProfilePet() {
               </div>
 
               <div className="field">
-                <label>Sexo <span className="required">*</span></label>
+                <label>
+                  Sexo <span className="required">*</span>
+                </label>
                 <select
                   name="sexo"
                   value={form.sexo}
@@ -535,10 +566,16 @@ export default function ProfilePet() {
       {/* Modal de QR Code */}
       {modalQrAberto && animal && (
         <div className="modal-overlay" onClick={() => setModalQrAberto(false)}>
-          <div className="modal-content modal-qrcode" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="modal-content modal-qrcode"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="modal-header">
               <h2>QR Code - {animal.nome}</h2>
-              <button className="btn-fechar" onClick={() => setModalQrAberto(false)}>
+              <button
+                className="btn-fechar"
+                onClick={() => setModalQrAberto(false)}
+              >
                 ×
               </button>
             </div>
@@ -547,14 +584,16 @@ export default function ProfilePet() {
               <p className="qrcode-description">
                 Escaneie este QR code para informar sobre o encontro do pet
               </p>
-              
+
               <div className="qrcode-size-selector">
                 <label htmlFor="tamanho-qr">Tamanho para impressão:</label>
                 <select
                   id="tamanho-qr"
                   value={`${qrTamanho.largura}x${qrTamanho.altura}`}
                   onChange={(e) => {
-                    const [largura, altura] = e.target.value.split('x').map(Number);
+                    const [largura, altura] = e.target.value
+                      .split("x")
+                      .map(Number);
                     setQrTamanho({ largura, altura });
                     // Converte cm para pixels (1cm ≈ 37.8 pixels na impressão)
                     const pixelsPorCm = 37.8;
@@ -583,21 +622,28 @@ export default function ProfilePet() {
               </div>
 
               <div className="qrcode-url">
-                <p className="url-label">URL:</p>
-                <p className="url-value">{FRONTEND_URL}/informar-encontro/{animal.id}</p>
+                <p className="url-value">
+                  <Link
+                    to={`${FRONTEND_URL}/informar-encontro/${animal.id}`}
+                    target="_blank"
+                  >
+                    Acessar Link
+                  </Link>
+                </p>
               </div>
 
               <div className="qrcode-actions">
                 <button
                   className="btn-download-qr"
                   onClick={() => {
-                    const qrContainer = document.querySelector('.qrcode-container');
-                    const svg = qrContainer?.querySelector('svg');
+                    const qrContainer =
+                      document.querySelector(".qrcode-container");
+                    const svg = qrContainer?.querySelector("svg");
                     if (!svg) return;
 
                     const svgData = new XMLSerializer().serializeToString(svg);
-                    const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
+                    const canvas = document.createElement("canvas");
+                    const ctx = canvas.getContext("2d");
                     const img = new Image();
 
                     img.onload = () => {
@@ -606,15 +652,20 @@ export default function ProfilePet() {
                       if (ctx) {
                         ctx.drawImage(img, 0, 0);
                       }
-                      const pngFile = canvas.toDataURL('image/png');
-                      
-                      const downloadLink = document.createElement('a');
-                      downloadLink.download = `QRCode-${animal.nome.replace(/\s+/g, '_')}-${animal.id}.png`;
+                      const pngFile = canvas.toDataURL("image/png");
+
+                      const downloadLink = document.createElement("a");
+                      downloadLink.download = `QRCode-${animal.nome.replace(
+                        /\s+/g,
+                        "_"
+                      )}-${animal.id}.png`;
                       downloadLink.href = pngFile;
                       downloadLink.click();
                     };
 
-                    img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
+                    img.src =
+                      "data:image/svg+xml;base64," +
+                      btoa(unescape(encodeURIComponent(svgData)));
                   }}
                 >
                   Baixar QR Code
@@ -623,11 +674,11 @@ export default function ProfilePet() {
                 <button
                   className="btn-print-qr"
                   onClick={() => {
-                    const printWindow = window.open('', '_blank');
+                    const printWindow = window.open("", "_blank");
                     if (!printWindow) return;
 
-                    const qrContainer = document.getElementById('qrcode-print');
-                    const svg = qrContainer?.querySelector('svg');
+                    const qrContainer = document.getElementById("qrcode-print");
+                    const svg = qrContainer?.querySelector("svg");
                     if (!svg) return;
 
                     // Calcula dimensões em pixels para impressão (1cm = 37.8px)
@@ -636,7 +687,9 @@ export default function ProfilePet() {
                     const alturaPx = qrTamanho.altura * pixelsPorCm;
 
                     const svgData = new XMLSerializer().serializeToString(svg);
-                    const svgBase64 = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
+                    const svgBase64 =
+                      "data:image/svg+xml;base64," +
+                      btoa(unescape(encodeURIComponent(svgData)));
 
                     printWindow.document.write(`
                       <!DOCTYPE html>
@@ -646,7 +699,9 @@ export default function ProfilePet() {
                           <style>
                             @media print {
                               @page {
-                                size: ${qrTamanho.largura}cm ${qrTamanho.altura}cm;
+                                size: ${qrTamanho.largura}cm ${
+                      qrTamanho.altura
+                    }cm;
                                 margin: 0;
                               }
                               body {
@@ -706,10 +761,16 @@ export default function ProfilePet() {
                         </head>
                         <body>
                           <div class="qrcode-wrapper">
-                            <img src="${svgBase64}" alt="QR Code - ${animal.nome}" />
+                            <img src="${svgBase64}" alt="QR Code - ${
+                      animal.nome
+                    }" />
                             <div class="pet-info">
                               <span class="pet-nome">${animal.nome}</span>
-                              ${animal.raca ? `<span class="pet-raca">- ${animal.raca}</span>` : ''}
+                              ${
+                                animal.raca
+                                  ? `<span class="pet-raca">- ${animal.raca}</span>`
+                                  : ""
+                              }
                             </div>
                           </div>
                           <script>
