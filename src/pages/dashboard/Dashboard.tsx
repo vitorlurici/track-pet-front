@@ -1,9 +1,8 @@
-
 import { ExitIcon } from "../../assets/svg/ExitIcon";
 import { MoreIcon } from "../../assets/svg/MoreIcon";
 import "./Dashboard.scss";
 import { ProfileIcon } from "../../assets/svg/ProfileIcon";
-import  { getUsuario } from "../services/usuarioService";
+import { getUsuario } from "../services/usuarioService";
 import { getAnimais } from "../services/animalService";
 import { useEffect, useState } from "react";
 import type { Animal } from "../types/animal";
@@ -11,7 +10,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { removeToken, getTokenData } from "../services/authService";
 
 export default function Dashboard() {
-  const API_URL = "http://localhost:8080";//alterar para variavel global
+  const API_URL = "http://localhost:8080"; //alterar para variavel global
   const [nome, setNome] = useState<string>("");
   const [animais, setAnimais] = useState<Animal[]>([]);
   const navigate = useNavigate();
@@ -39,7 +38,8 @@ export default function Dashboard() {
     // Checa expiração do token a cada minuto
     const timer = setInterval(() => {
       const { time } = getTokenData();
-      if (time && Date.now() - time > 2 * 60 * 60 * 1000) { // 2 horas
+      if (time && Date.now() - time > 2 * 60 * 60 * 1000) {
+        // 2 horas
         removeToken();
         navigate("/");
       }
@@ -50,27 +50,6 @@ export default function Dashboard() {
   function handleLogout() {
     removeToken();
     navigate("/");
-  }
-
-  function getSituacaoFormatada(situacao: string): string {
-    const situacaoUpper = situacao.toUpperCase().trim();
-    if (situacaoUpper === "PERDIDO" || situacaoUpper === "P") {
-      return "Perdido";
-    }
-    if (situacaoUpper === "VIVO" || situacaoUpper === "V") {
-      return "Vivo";
-    }
-    return situacao.charAt(0).toUpperCase() + situacao.slice(1).toLowerCase();
-  }
-
-  function isPerdido(situacao: string): boolean {
-    const situacaoUpper = situacao.toUpperCase().trim();
-    return situacaoUpper === "PERDIDO" || situacaoUpper === "P";
-  }
-
-  function isVivo(situacao: string): boolean {
-    const situacaoUpper = situacao.toUpperCase().trim();
-    return situacaoUpper === "VIVO" || situacaoUpper === "V";
   }
 
   return (
@@ -118,11 +97,9 @@ export default function Dashboard() {
                       />
                     ) : null}
                   </div>
-                  <span className="pet-nome">{pet.nome.charAt(0).toUpperCase() + pet.nome.slice(1).toLowerCase()}</span>
-                  <span 
-                    className={`pet-situacao ${isPerdido(pet.situacao) ? 'perdido' : isVivo(pet.situacao) ? 'vivo' : 'normal'}`}
-                  >
-                    {getSituacaoFormatada(pet.situacao)}
+                  <span className="pet-nome">
+                    {pet.nome.charAt(0).toUpperCase() +
+                      pet.nome.slice(1).toLowerCase()}
                   </span>
                 </div>
               </Link>

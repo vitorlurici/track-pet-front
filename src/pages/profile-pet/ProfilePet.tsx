@@ -409,17 +409,6 @@ export default function ProfilePet() {
                 <input disabled value={animal.cor} placeholder="Cor" />
               </div>
             )}
-
-            {animal.situacao && (
-              <div className="field">
-                <label>Situação</label>
-                <input
-                  disabled
-                  value={animal.situacao}
-                  placeholder="Situação"
-                />
-              </div>
-            )}
           </div>
         )}
 
